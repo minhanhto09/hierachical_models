@@ -1,0 +1,394 @@
+---
+title: "Song Sparrow Dataset Analysis"
+author: "TO MINH ANH"
+format: pdf
+date: "`r Sys.Date()`"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Import libraries and load the dataset
+
+```{r}
+# Load necessary libraries
+library(ggplot2)
+library(patchwork)  # For side-by-side plots
+library(gridExtra)
+library(dplyr)
+library(lme4)
+library(nlme)
+
+# Install and load the car package
+#install.packages("car")
+library(car)
+```
+
+
+```{r}
+# Load the dataset
+data = read.csv("female.csv")
+
+# Summary/Structure of the dataset
+summary(data)
+#glimpse(data)
+```
+
+```{r}
+length(unique(data$band))
+```
+
+The data set comprises 742 entries and 8 columns, with data corresponding to 360 unique sparrows included in the study. In this analysis, `year` and `cohort` are converted into categorical variables.
+
+
+```{r}
+# Convert year and cohort to factors
+data$year = as.factor(data$year)
+data$cohort = as.factor(data$cohort)
+```
+
+# Study Design
+
+```{r}
+# Handle missing values
+data_clean = na.omit(data)
+```
+
+
+# Data Description
+
+
+## Visualizing the Relationship Between the Number of Offspring and Grouping Factors
+
+```{r}
+# Ensure 'year' and 'cohort' are numeric (convert factor to numeric if necessary)
+data$year = as.numeric(as.character(data$year))
+data$cohort = as.numeric(as.character(data$cohort))
+
+# Drop missing values for 'year' and 'cohort'
+data_clean = data[!is.na(data$year) & !is.na(data$cohort), ]
+
+# Count sample sizes for each year
+year_counts = as.data.frame(table(data_clean$year))
+colnames(year_counts) = c("year", "sample_size")
+year_counts$year = as.numeric(as.character(year_counts$year))
+
+# Count sample sizes for each cohort
+cohort_counts = as.data.frame(table(data_clean$cohort))
+colnames(cohort_counts) = c("cohort", "sample_size")
+cohort_counts$cohort = as.numeric(as.character(cohort_counts$cohort))
+
+# Create the plot for year
+plot_year = ggplot(year_counts, aes(x = as.factor(year), y = sample_size)) +
+  geom_bar(stat = "identity", fill = "skyblue") +
+  labs(title = "Sample Sizes Across Year", x = "Year", y = "Sample Size") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+
+# Create the plot for cohort
+plot_cohort = ggplot(cohort_counts, aes(x = as.factor(cohort), y = sample_size)) +
+  geom_bar(stat = "identity", fill = "coral") +
+  labs(title = "Sample Sizes Across Cohort", x = "Cohort", y = "Sample Size") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.1)))
+
+# Combine the two plots side by side
+combined_plot = plot_year + plot_cohort
+
+# Print the combined plot
+print(combined_plot)
+```
+
+```{r}
+# Convert year and cohort to factors
+data$year = as.factor(data$year)
+data$cohort = as.factor(data$cohort)
+```
+
+```{r}
+# Box plot of spf by Year (Macro Grouping Factor)
+ggplot(data, aes(x = as.factor(year), y = spf)) +
+  geom_boxplot(fill = "lightblue", color = "darkblue") +
+  labs(
+    title = "Number of Offspring (spf) by Year",
+    x = "Year",
+    y = "Number of Offspring (spf)"
+  ) +
+  theme_minimal()
+
+# Box plot of spf by Cohort (Can be Macro or Micro Grouping Factor)
+ggplot(data, aes(x = as.factor(cohort), y = spf)) +
+  geom_boxplot(fill = "lightgreen", color = "darkgreen") +
+  labs(
+    title = "Number of Offspring (spf) by Cohort",
+    x = "Cohort",
+    y = "Number of Offspring (spf)"
+  ) +
+  theme_minimal()
+
+# Box plot of spf by Bird ID (Micro Grouping Factor)
+# Since there may be too many birds, we'll limit to a subset of birds
+subset_birds = data %>%
+  filter(band %in% sample(unique(band), 20))  # Sample 20 random birds for visualization
+
+ggplot(subset_birds, aes(x = as.factor(band), y = spf)) +
+  geom_boxplot(fill = "pink", color = "darkred") +
+  labs(
+    title = "Number of Offspring (spf) by Bird ID (Subset of 20 Birds)",
+    x = "Bird ID (Band)",
+    y = "Number of Offspring (spf)"
+  ) +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))  # Rotate x-axis labels for readability
+```
+
+## Relationship Between Cohort, Year, and Age
+
+Check if all the values in the columns `age`, `year`, and `cohort` follow the formula `age=year−cohort+1`
+
+```{r}
+# Ensure year, cohort, and age are numeric (in case they are read as factors)
+data$year = as.numeric(as.character(data$year))
+data$cohort = as.numeric(as.character(data$cohort))
+data$age = as.numeric(as.character(data$age))
+
+# Remove rows with missing values in age, year, or cohort
+filtered_data = na.omit(data[, c("age", "year", "cohort")])
+
+# Check if the formula holds for all rows
+valid_formula = filtered_data$age == (filtered_data$year - filtered_data$cohort + 1)
+
+# Check if all the values satisfy the condition
+all_valid = all(valid_formula, na.rm = TRUE)
+
+# Print result
+if (all_valid) {
+  print("All non-missing rows satisfy the formula age = year - cohort + 1")
+} else {
+  print("There are rows where the formula does not hold.")
+}
+
+# See which rows violate the formula, print them
+violating_rows = filtered_data[!valid_formula, ]
+if (nrow(violating_rows) > 0) {
+  print("Rows that do not satisfy the formula:")
+  print(violating_rows)
+}
+```
+
+```{r}
+# Get all rows with at least one missing value
+rows_with_missing = data[!complete.cases(data), ]
+
+# Count the number of rows with missing values
+num_rows_with_missing = nrow(rows_with_missing)
+print(paste("Number of rows with at least one missing value:", num_rows_with_missing))
+```
+
+```{r}
+# Create a table
+table_data = table(data$year, data$cohort)
+print(table_data)
+# Calculate the correlation between year and cohort
+cor(as.numeric(data$year), as.numeric(data$cohort), use = "complete.obs")
+cor(as.numeric(data$year), as.numeric(data$age), use = "complete.obs")
+cor(as.numeric(data$cohort), as.numeric(data$age), use = "complete.obs")
+```
+
+```{r}
+# Convert table to data frame
+df_table = as.data.frame(table(data$year, data$cohort))
+
+# Plot as heatmap
+ggplot(df_table, aes(Var1, Var2, fill = Freq)) +
+  geom_tile(color = "white") +
+  scale_fill_gradient(low = "white", high = "blue") +
+  labs(title = "Heatmap of Year vs Cohort",
+       x = "Cohort",
+       y = "Year",
+       fill = "Frequency") +
+  theme_minimal()
+```
+
+
+## Preliminary Modeling
+
+
+### Sequential Hypothesis Testing
+
+**Micro Variables**
+
+```{r}
+# Fit the full model
+lm_full = lm(spf ~ age + fpop + x + y, data = data)
+# Set contrasts to be compatible with Type III ANOVA
+options(contrasts = c("contr.sum", "contr.poly"))
+
+# Perform Type III ANOVA
+Anova(lm_full, type = "III")
+```
+```{r}
+summary(lm_full)
+```
+
+```{r}
+vif(lm_full)  # Variance Inflation Factor
+```
+
+**Macro Variables**
+
+```{r}
+lm = lm(spf ~ fpop + x + age, data = data_clean)
+
+lm_inter1 = lm(spf ~ fpop + x + age + fpop:age, data = data_clean)
+lm_inter2 = lm(spf ~ fpop + x + age + x:y, data = data_clean)
+
+lm_cohort = lm(spf ~ fpop + x + age + as.factor(cohort), data = data_clean)
+lm_year = lm(spf ~ fpop + x + age + as.factor(year), data = data_clean)
+lm_both = lm(spf ~ fpop + x + age + as.factor(year) + as.factor(cohort), data = data_clean)
+
+anova(lm, lm_year)
+anova(lm, lm_cohort)
+anova(lm_cohort, lm_both)  
+anova(lm_year, lm_both)   
+
+AIC(lm, lm_inter1, lm_inter2, lm_cohort, lm_year, lm_both)
+BIC(lm, lm_inter1, lm_inter2, lm_cohort, lm_year, lm_both)
+```
+
+### Checking assumptions
+
+```{r}
+# Diagnostic plots for assumptions
+par(mfrow = c(1, 2))  # Arrange plots in a grid
+plot(lm_year)  # Residuals vs fitted, Q-Q plot, Scale-location, Residuals leverage
+```
+    
+# Model fitting and diagnostics
+
+## Linear Mixed-Effects Models
+
+```{r}
+fit1 = lmer(spf ~ fpop + x + age + (1 | band) + (1 | year), data = data_clean)
+fit2 = lmer(spf ~ fpop + x + age + (1 | year), data = data)
+fit3 = lmer(spf ~ fpop + x + age + (1 | band), data = data)
+BIC(fit1, fit2, fit3)
+```
+
+## Modeling Temporal Correlation
+
+```{r}
+# Handle missing values
+data_clean = na.omit(data)
+```
+
+```{r}
+# Fit the corAR1 model with year as the grouping factor
+fit4 = lme(
+  spf ~ fpop + x + age,                # Fixed effects
+  random = ~1 | year,                  # Random intercept for year
+  correlation = corAR1(),              # AR(1) structure for temporal correlation
+  data = data_clean,                   # Cleaned dataset
+  method = "ML"                        # Use Maximum Likelihood for comparison
+)
+
+# Check BIC of the model
+BIC(fit4)
+```
+
+```{r}
+# Fit a model with random slopes for age by year
+fit5 = lme(
+  spf ~ fpop + x + age,                 # Fixed effects
+  random = list(year = pdDiag(~ age)),  # Random intercept and slope for age by year
+  correlation = corAR1(),               # AR(1) structure for temporal correlation
+  data = data_clean,
+  method = "ML"
+)
+
+# Compare BIC with fit_corAR1
+BIC(fit4, fit5)
+```
+
+Checking interactions
+
+```{r}
+add1(fit4, "fpop*age", data = data, test = "Chisq")
+add1(fit4, "fpop*x", data = data, test = "Chisq")
+add1(fit4, "x*y", data = data, test = "Chisq")
+add1(fit4, "fpop*y", data = data, test = "Chisq")
+add1(fit4, "age*y", data = data, test = "Chisq")
+add1(fit4, "age*x", data = data, test = "Chisq")
+add1(fit4, "band*age", data = data, test = "Chisq")
+add1(fit4, "band*x", data = data, test = "Chisq")
+add1(fit4, "band*fpop", data = data, test = "Chisq")
+```
+
+## Checking assumptions
+
+```{r}
+par(mfrow = c(1, 2)) 
+
+# Generate plots
+qqnorm(resid(fit4), main = "Normal Q-Q Plot")
+qqline(resid(fit4), col = "red")
+
+hist(resid(fit4), breaks = 10, main = "Histogram of Residuals", xlab = "Residuals")
+```
+
+```{r}
+# Set up a 2x2 plotting canvas
+par(mfrow = c(1, 2))
+
+acf(resid(fit4), main = "ACF of Residuals")
+
+plot(fitted(fit4), residuals(fit4, type = "pearson"), 
+     main = "Residuals vs Fitted", xlab = "Fitted Values", ylab = "Residuals")
+abline(h = 0, col = "red")
+```
+
+# Model and data analysis interpretation
+
+```{r}
+# Summary of the final model
+summary(fit4)
+```
+
+```{r}
+# Compute confidence intervals for the model
+intervals(fit4, level = 0.95)  # Default is 95% confidence level
+```
+
+```{r}
+# Install from CRAN
+install.packages("glmmTMB")
+
+# If you need lme4 as well
+install.packages("lme4")
+
+# Optional but recommended: install for model comparison and diagnostics
+install.packages(c("performance", "DHARMa"))
+
+# Load the packages after installation
+library(glmmTMB)
+library(lme4)
+library(performance)  # for model diagnostics
+library(DHARMa)       # for residual diagnostics
+```
+
+```{r}
+# Poisson mixed-effects model
+fit_poisson = glmmTMB(
+  spf ~ fpop + x + age +  # Fixed effects
+    (1 | year),           # Random intercept for year
+  family = poisson(),     # Poisson distribution
+  data = data_clean,
+  REML = FALSE            # Equivalent to ML method
+)
+```
+
+
+
