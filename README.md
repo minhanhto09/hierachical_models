@@ -3,8 +3,6 @@
 ![](images/song_sparrow_1.jpg)
 
 ## Table of Contents
-
-## Table of Contents
 1. [Introduction](#introduction)
 2. [Key Insights](#key-insights)
 3. [Methods Overview](#methods-overview)
@@ -49,14 +47,18 @@ These findings emphasize the value of including both fixed and random effects in
 
     - Conduct preliminary modeling by performing sequential hypothesis testing on models with micro variables, macro variables, followed by models with interaction terms, using outputs from ANOVAs.  
 
-- Model fitting and diagnostics: Develop a hierarchical model (Linear Mixed-Effects Model) for the dataset that includes explanatory variables and grouping factors. Next, model the temporal correlation using an autoregressive structure. Use model selection criteria to compare this model to other models and choose one that describes all major sources of variation in the dataset. Evaluate any modeling assumptions.
+- Model fitting and diagnostics: Develop a hierarchical model (Linear Mixed-Effects Model) for the dataset that includes explanatory variables and grouping factors. Next, model the temporal correlation using an autoregressive structure. Use model selection criteria to compare this model to other models and choose one that describes all major sources of variation in the dataset.
+
+![](images/model_comparison.png)
+
+Evaluate any modeling assumptions.
 
 - Model and data analysis interpretation: Based on the final model, interpret fixed effects parameters, including confidence intervals for continuous or binary explanatory variables, and across-level comparisons for categorical factor variables. Use the results of the model fitting and data analysis to report findings related to the primary question of interest.
 
 - Conclusions:  Describe the scientific conclusions of the data analysis, including a qualitative, non-numerical summary of the hypothesis tests, model selection, and parameter estimates. 
 
 ## How to Use This Repository
-   - Read the full report in `full_report.pdf`.
+   - Read the detailed report in `full_report.pdf`.
    - Replicate the analysis using the provided code.
 
 ## Acknowledgement
