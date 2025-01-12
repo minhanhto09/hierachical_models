@@ -4,7 +4,14 @@
 
 ## Table of Contents
 
+## Table of Contents
 1. [Introduction](#introduction)
+2. [Key Insights](#key-insights)
+3. [Methods Overview](#methods-overview)
+4. [How to Use This Repository](#how-to-use-this-repository)
+5. [Acknowledgement](#acknowledgement)
+
+## Introduction
 
 Understanding the factors that drive reproductive success in birds offers valuable insights into ecological and evolutionary processes. For song sparrows, reproductive variability may stem from a combination of individual traits—such as fitness, age, or nesting behavior—and environmental influences like competition and nesting site quality.
 
@@ -18,11 +25,9 @@ This analysis seeks to uncover the ecological and biological drivers of reproduc
     
 - How do individual characteristics and environmental factors interact to influence variability in reproductive outcomes?
 
-2. [Key Insights](#key-insights)
+## Key Insights
 
-This analysis applies a **linear mixed-effects model** to investigate the factors influencing reproductive success in song sparrows. The model includes fixed effects for population density, nesting location, and age, as well as a random intercept to capture differences between years. Additionally, an **AR(1) correlation structure** is used to account for patterns over time.
-
-Key Findings:
+This analysis applies a **linear mixed-effects model** to investigate the factors influencing reproductive success in song sparrows. The model includes fixed effects for population density, nesting location, and age, as well as a random intercept to capture differences between years. Additionally, an **AR(1) correlation structure** is used to account for patterns over time. The key findings are:
 
 - Population density and nesting location have a significant impact on reproductive success.
     
@@ -32,9 +37,9 @@ Key Findings:
 
 These findings emphasize the value of including both fixed and random effects in ecological models. Future work could explore non-linear relationships and incorporate additional ecological variables to provide a more comprehensive understanding of reproductive success.
 
-3. [Methods Overview](#methods-overview)
+## Methods Overview
 
-- Describe Study Design: Provide a detailed description of the study design, including information on sample size(s), macro and micro explanatory variables, and any other relevant features of how the data were gathered.
+- Study Design: Provide a detailed description of the study design, including information on sample size(s), macro and micro explanatory variables, and any other relevant features of how the data were gathered.
 
 - Data description: 
 
@@ -50,60 +55,9 @@ These findings emphasize the value of including both fixed and random effects in
 
 - Conclusions:  Describe the scientific conclusions of the data analysis, including a qualitative, non-numerical summary of the hypothesis tests, model selection, and parameter estimates. 
 
-4. [How to Use This Repository](#how-to-use-this-repository)
+## How to Use This Repository
    - Read the full report in `full_report.pdf`.
    - Replicate the analysis using the provided code.
 
-5. [Acknowledgement](#acknowledgement)
+## Acknowledgement
    - This report is a direct application of knowledge from my STA 610 course on hierarchical models, taught by Professor Peter Hoff.
-
-\documentclass{article}
-\usepackage[utf8]{inputenc}
-
-\begin{document}
-
-\section*{Table of Contents}
-
-\begin{enumerate}
-    \item \textbf{Introduction}
-    \begin{itemize}
-        \item Brief overview of the project and key objectives.
-    \end{itemize}
-
-    \item \textbf{Key Insights}
-    \begin{itemize}
-        \item Summary of major findings, such as the impact of population density on offspring and trends in reproductive success.
-    \end{itemize}
-
-    \item \textbf{Visualizations}
-    \begin{itemize}
-        \item Example: Number of offspring by year.
-        \item Example: Heatmap of year vs. cohort.
-    \end{itemize}
-
-    \item \textbf{Methods Overview}
-    \begin{itemize}
-        \item Data preprocessing and handling missing values.
-        \item Use of linear mixed-effects models.
-        \item Diagnostics and residual analysis.
-    \end{itemize}
-
-    \item \textbf{How to Use This Repository}
-    \begin{itemize}
-        \item Instructions for accessing the full report.
-        \item Steps to replicate the analysis using the provided code.
-    \end{itemize}
-
-    \item \textbf{Future Work}
-    \begin{itemize}
-        \item Expanding the analysis with additional variables.
-        \item Implementing predictive models for reproductive success.
-    \end{itemize}
-
-    \item \textbf{Acknowledgments}
-    \begin{itemize}
-        \item Credit to mentors, instructors, or collaborators.
-    \end{itemize}
-\end{enumerate}
-
-\end{document}
