@@ -2,15 +2,58 @@
 
 ![](images/song_sparrow_1.jpg)
 
-Reproductive success in bird populations is influenced by a variety of factors, including fitness, age, competition, nesting site quality, and environmental conditions. This study analyzes a 19-year observational dataset of song sparrows on a Pacific Northwest island to investigate these factors. These sparrows are monogamous, with females beginning to mate at one year old and often reusing the same nesting sites due to their territorial nature, even under suboptimal conditions. The dataset includes detailed information on individual sparrows, such as their age, nesting location, the year they were tagged, and the number of offspring produced. It also captures broader variables, such as the year of the study and population density, offering a comprehensive view of factors influencing reproductive success.
+## Table of Contents
 
+1. [Introduction](#introduction)
 
-The primary objective of this analysis is to understand the ecological and biological sources of variability in reproductive success among song sparrows. Specifically, this study addresses the following questions:
+Understanding the factors that drive reproductive success in birds offers valuable insights into ecological and evolutionary processes. For song sparrows, reproductive variability may stem from a combination of individual traits—such as fitness, age, or nesting behavior—and environmental influences like competition and nesting site quality.
+
+To explore these dynamics, a multiyear observational study was conducted on a population of song sparrows inhabiting an island in the Pacific Northwest. Known for their monogamous behavior during mating seasons and strong territorial instincts, these sparrows exhibit fascinating patterns: females typically establish their first nests at one year old and remain loyal to suboptimal nesting sites year after year.
+
+This analysis seeks to uncover the ecological and biological drivers of reproductive variability in this population. Specifically, it addresses the following key questions:
 
 - How do individual-level factors, such as age or nesting location, and population-level variables, such as competition (population density), influence reproductive success?
-
+    
 - Are there observable trends or patterns in reproductive success across different years or cohorts of sparrows?
-
+    
 - How do individual characteristics and environmental factors interact to influence variability in reproductive outcomes?
 
-To address these questions, this analysis uses a **linear mixed-effects model** (Bates et al. (2014)) with fixed effects for female population density, spatial location, and age, and a random intercept for year. Moreover, it incorporates an AR(1) (Box et al. (1994)) **correlation structure** to account for temporal autocorrelation. The results show that population and nesting location significantly affect reproductive success, while age has no statistically significant impact. Temporal variability is effectively captured by the random intercept and the AR(1) structure, highlighting year-to-year differences in reproductive outcomes. This study highlights the need to account for both fixed and random effects to understand ecological processes and suggests future model improvements, such as exploring non-linear patterns and additional ecological variables.
+2. [Key Insights](#key-insights)
+
+This analysis applies a **linear mixed-effects model** to investigate the factors influencing reproductive success in song sparrows. The model includes fixed effects for population density, nesting location, and age, as well as a random intercept to capture differences between years. Additionally, an **AR(1) correlation structure** is used to account for patterns over time.
+
+Key Findings:
+
+- Population density and nesting location have a significant impact on reproductive success.
+    
+- Age does not show a statistically significant effect on reproduction.
+    
+- Year-to-year differences are effectively captured by the random intercept and the AR(1) structure, highlighting the importance of accounting for temporal variability.
+
+These findings emphasize the value of including both fixed and random effects in ecological models. Future work could explore non-linear relationships and incorporate additional ecological variables to provide a more comprehensive understanding of reproductive success.
+
+3. [Methods Overview](#methods-overview)
+
+- Describe Study Design: Provide a detailed description of the study design, including information on sample size(s), macro and micro explanatory variables, and any other relevant features of how the data were gathered.
+
+- Data description: 
+
+    - Handle missingness and correlation between variables.
+
+    - Use visualizations to describe the main sources of heterogeneity in the dataset, such as grouping factors and explanatory variables.
+
+    - Conduct preliminary modeling by performing sequential hypothesis testing on models with micro variables, macro variables, followed by models with interaction terms, using outputs from ANOVAs.  
+
+- Model fitting and diagnostics: Develop a hierarchical model (Linear Mixed-Effects Model) for the dataset that includes explanatory variables and grouping factors. Next, model the temporal correlation using an autoregressive structure. Use model selection criteria to compare this model to other models and choose one that describes all major sources of variation in the dataset. Evaluate any modeling assumptions.
+
+- Model and data analysis interpretation: Based on the final model, interpret fixed effects parameters, including confidence intervals for continuous or binary explanatory variables, and across-level comparisons for categorical factor variables. Use the results of the model fitting and data analysis to report findings related to the primary question of interest.
+
+- Conclusions:  Describe the scientific conclusions of the data analysis, including a qualitative, non-numerical summary of the hypothesis tests, model selection, and parameter estimates. 
+
+4. [How to Use This Repository](#how-to-use-this-repository)
+   - Read the full report in `full_report.pdf`.
+   - Replicate the analysis using the provided code.
+
+5. [Acknowledgement](#acknowledgement)
+   - This report is a direct application of knowledge from my STA 610 course on hierarchical models, taught by Professor Peter Hoff.
+
